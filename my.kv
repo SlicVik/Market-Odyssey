@@ -1,0 +1,446 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+#: import ZBarCam kivy_garden.zbarcam.ZBarCam
+#: import ZBarSymbol pyzbar.pyzbar.ZBarSymbol
+#: import MDNavigationDrawer kivymd.uix.navigationdrawer.MDNavigationDrawer
+
+
+<loginScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: get_color_from_hex("#EED9C4")
+
+        Image:
+            source: 'coloredship.png'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.75}
+            size_hint: None, None
+            size: 300, 300
+
+        MDLabel:
+            text: "Market Odyssey"
+            theme_text_color: "Primary"
+            pos_hint: {'center_x': 0.73, 'center_y': 0.45}
+            font_name: "Kiona-Regular"
+            font_size: "50sp"
+
+        MDRoundFlatIconButton:
+            text: "Login with Google"
+            icon: "google"
+            md_bg_color: get_color_from_hex("#69140E")
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            text_color: "white"
+            font_name: "BebasNeue-Regular"
+            icon_color : "white"
+            font_size: "18sp"
+            on_release: app.login()
+            padding: 20
+
+        MDLabel:
+            text: ""
+            theme_text_color: "Primary"
+            pos_hint: {'center_x': 0.73, 'center_y': 0.45}
+            font_name: "Kiona-Regular"
+            font_size: "50sp"
+
+
+<mainScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+       # MDTopAppBar
+        MDTopAppBar:
+            id: toolbar
+            title: "Market Odyssey"
+            md_bg_color: get_color_from_hex("#69140E")
+            elevation: 4
+            right_action_items: [["account-circle", lambda x: app.movetosetting(), "Settings"]]
+
+
+        # FloatLayout to overlay a label
+        MDFloatLayout:
+
+            MDBottomNavigation:
+                panel_color: get_color_from_hex("#69140E")
+                text_color_normal: get_color_from_hex("#F5F5F5")
+                font_name: "Kiona-Regular"
+
+                MDBottomNavigationItem:
+                    name: "search"
+                    icon: "magnify"
+                    icon_color: "white"
+                    text: "search"
+                    text_color: "white"
+                    MDFloatLayout:
+                        orientation: 'vertical'
+                        md_bg_color: get_color_from_hex("#EED9C4")
+
+                        Image:
+                            source: 'coloredship.png'
+                            pos_hint: {'center_x': 0.95, 'center_y': 0.13}
+                            size_hint: None, None
+                            size: 150, 150
+
+
+                        MDTextField:
+                            id: product_name
+                            hint_text: "Enter Product Name"
+                            mode: "rectangle"
+                            size_hint_x: .5
+                            pos_hint: {"center_x": 0.5, "center_y": 0.8}
+                            on_text_validate: root.get_results()
+
+                        MDLabel:
+                            text: "OR"
+                            size_hint_x: .5
+                            pos_hint: {"center_x": 0.70, "center_y": 0.6}
+                            font_size: "30sp"
+                            font_name: "Kiona-Regular"
+
+                        MDRoundFlatIconButton:
+                            icon: 'barcode-scan'
+                            text: 'Barcode Scanner'
+                            icon_color : "white"
+                            md_bg_color: get_color_from_hex("#69140E")
+                            pos_hint: {"center_x": 0.48, "center_y": 0.4}
+                            text_color: "white"
+                            font_size: "20sp"
+                            font_name: "BebasNeue-Regular"
+                            on_release:app.root.current = "barcode_screen"
+
+                MDBottomNavigationItem:
+                    name: "lists"
+                    icon_color: "white"
+                    icon: "format-list-bulleted"
+                    text: "lists"
+                    md_bg_color: get_color_from_hex("#EED9C4")
+
+                    ScrollView:
+                        MDList:
+                            id: user_lists
+
+                    # Button for adding a list
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        padding: "30dp"
+                        MDRoundFlatIconButton:
+                            icon: 'plus'
+                            text: 'Add List'
+                            icon_color : "white"
+                            md_bg_color: get_color_from_hex("#69140E")
+                            text_color: "white"
+                            font_size: "20sp"
+                            font_name: "BebasNeue-Regular"
+                            on_release: app.root.get_screen('add_list_screen').add_list()
+
+                        MDLabel:
+                            text: ""
+                            theme_text_color: "Primary"
+                            pos_hint: {'center_x': 0.73, 'center_y': 0.45}
+                            font_name: "Kiona-Regular"
+                            font_size: "10sp"
+
+                        MDRoundFlatIconButton:
+                            icon: 'clock-outline'
+                            text: 'Recent Searches'
+                            icon_color : "white"
+                            md_bg_color: get_color_from_hex("#69140E")
+                            text_color: "white"
+                            font_size: "20sp"
+                            font_name: "BebasNeue-Regular"
+                            on_release: app.move_to_recent_search()
+
+
+<listItemsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: root.title
+            md_bg_color: get_color_from_hex("#69140E")
+            font_name: "Kiona-Regular"
+
+            left_action_items: [["arrow-left", lambda x: app.movetomain(), "Back"]]
+
+        MDFloatLayout:
+            md_bg_color: get_color_from_hex("#EED9C4")
+            ScrollView:
+                MDList:
+                    id: list_items
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                MDRoundFlatIconButton:
+                    icon: 'delete'
+                    text: 'Remove List'
+                    icon_color : "white"
+                    md_bg_color: get_color_from_hex("#69140E")
+                    text_color: "white"
+                    font_size: "20sp"
+                    font_name: "BebasNeue-Regular"
+                    on_release: root.remove_current_list()  # Call the remove_current_list method of the listItemsScreen instance
+
+                MDRoundFlatIconButton:
+                    icon: 'plus'
+                    text: 'Add Item'
+                    icon_color : "white"
+                    md_bg_color: get_color_from_hex("#69140E")
+                    text_color: "white"
+                    font_size: "20sp"
+                    font_name: "BebasNeue-Regular"
+                    on_release: app.move_to_add_from_recent_search()
+
+                MDRoundFlatIconButton:
+                    icon: 'map'
+                    text: 'Start Shopping'
+                    icon_color : "white"
+                    md_bg_color: get_color_from_hex("#69140E")
+                    text_color: "white"
+                    font_size: "20sp"
+                    font_name: "BebasNeue-Regular"
+                    on_release: app.move_to_directions_screen()
+
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: "#e7e4c0"
+    text_color: "#4a4939"
+    icon_color: "#F5F5F5"
+    focus_behavior: False
+
+<settings>:
+    MDFloatLayout:
+        md_bg_color: get_color_from_hex("#EED9C4")
+
+        Image:
+            source: 'coloredship.png'
+            pos_hint: {'center_x': 0.95, 'center_y': 0.13}
+            size_hint: None, None
+            size: 150, 150
+
+        MDLabel:
+            id: namelbl
+            text: ""
+            theme_text_color: "Custom"
+            text_color: 0, 0, 0, 1
+            font_name: "Kiona-Regular"
+            font_size: '30sp'
+            pos_hint: {"center_x": .6, "center_y": .8}
+
+        MDLabel:
+            id: maillbl
+            text: ""
+            theme_text_color: "Custom"
+            text_color: 0, 0, 0, 1
+            font_name: "Kiona-Regular"
+            font_size: '30sp'
+            pos_hint: {"center_x": .6, "center_y": .7}
+
+        MDTopAppBar:
+            id: toolbar
+            title: "Settings"
+            elevation: 4
+            pos_hint: {"top": 1}
+            md_bg_color: "#69140E"
+            specific_text_color: "#F5F5F5"
+            left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+
+
+    MDNavigationDrawer:
+        id: nav_drawer
+        #radius: (0, 16, 16, 0)
+        type: "modal"
+        text_font_style: "Kiona-Regular"
+        md_bg_color: "#69140E"
+
+        MDNavigationDrawerMenu:
+            MDNavigationDrawerHeader:
+                title: "Settings"
+                title_color: "#F5F5F5"
+                spacing: "4dp"
+                padding: "12dp", 0, 0, "56dp"
+
+            DrawerClickableItem:
+                icon: "account-eye"
+                text_color: "#F5F5F5"
+                text_right_color: "#4a4939"
+                text: "Account Details"
+                #on_release: app.root.current = "main_screen"
+
+            MDNavigationDrawerDivider:
+
+            DrawerClickableItem:
+                icon: "keyboard-return"
+                text_color: "#F5F5F5"
+                text_right_color: "#4a4939"
+                text: "Go to Home"
+                on_release: app.root.current = "main_screen"
+
+            MDNavigationDrawerDivider:
+
+            DrawerClickableItem:
+                icon: "book"
+                text_color: "#F5F5F5"
+                text_right_color: "#4a4939"
+                text: "Get to know the App!"
+                on_release: app.root.current = "slideshow_screen"
+
+            MDNavigationDrawerDivider:
+
+            DrawerClickableItem:
+                icon: "logout"
+                text_color: "#F5F5F5"
+                text_right_color: "#4a4939"
+                text: "Logout"
+                on_release: root.logout()
+
+<AddListScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: get_color_from_hex("#EED9C4")
+
+        MDTopAppBar:
+            title: "Add List"
+            md_bg_color: get_color_from_hex("#69140E")
+            font_name: "Kiona-Regular"
+            left_action_items: [["arrow-left", lambda x: app.movetomain(), "Back"]]
+
+        MDFloatLayout:
+            MDTextField:
+                id: list_name_input
+                hint_text: "Enter List Name"
+                mode: "rectangle"
+                size_hint_x: .8
+                pos_hint: {"center_x": 0.5, "center_y": 0.6}
+
+            MDRoundFlatIconButton:
+                icon: 'plus'
+                text: 'Add'
+                icon_color : "white"
+                md_bg_color: get_color_from_hex("#69140E")
+                text_color: "white"
+                font_size: "20sp"
+                font_name: "BebasNeue-Regular"
+                on_release: app.root.get_screen('add_list_screen').add_list()
+
+<RecentSearchScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Recent Searches"
+            md_bg_color: get_color_from_hex("#69140E")
+            font_name: "Kiona-Regular"
+            left_action_items: [["arrow-left", lambda x: app.movetomain(), "Back"]]
+
+        MDFloatLayout:
+            md_bg_color: get_color_from_hex("#EED9C4")
+            ScrollView:
+                MDList:
+                    id: recent_search_list  # Reference to the MDList where recent searches will be displayed
+
+<directionsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: get_color_from_hex("#EED9C4")
+        # Top navigation bar
+        MDTopAppBar:
+            title: "Item Availability"
+            md_bg_color: get_color_from_hex("#69140E")
+            font_name: "Kiona-Regular"
+            left_action_items: [["arrow-left", lambda x: app.movetomain(), "Back"]]
+
+        # Add your content here
+        BoxLayout:
+            orientation: 'vertical'
+            padding: dp(16)
+
+            # Add an MDList to display the items and locations
+            ScrollView:
+                BoxLayout:
+                    id: items_location_list  # Give it an ID to reference in Python code
+                    orientation: 'vertical'
+                    spacing: 0  # No spacing between labels
+                    padding: dp(0)  # No padding
+                    size_hint_y: None  # Disable automatic height adjustment
+                    height: self.minimum_height  # Set height to fit content
+
+            MDRoundFlatIconButton:
+                icon: 'map'
+                text: 'Get Directions'
+                icon_color : "white"
+                md_bg_color: get_color_from_hex("#69140E")
+                text_color: "white"
+                font_size: "20sp"
+                font_name: "BebasNeue-Regular"
+                on_release: root.go_to_google_maps()
+            # Add other UI elements here
+
+<ItemDetailsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: get_color_from_hex("#EED9C4")
+
+        MDTopAppBar:
+            title: root.current_item_title
+            md_bg_color: get_color_from_hex("#69140E")
+            font_name: "Kiona-Regular"
+            left_action_items: [["arrow-left", lambda x: app.move_to_add_from_recent_search(), "Back"]]
+
+
+        MDFloatLayout:
+            ScrollView:
+                scroll_y: 1.0  # Set scroll_y to a fixed value to prevent resetting
+                MDList:
+                    id: key_value_pairs
+            MDRoundFlatIconButton:
+                icon: 'trash-can-outline'
+                text: 'Remove Item'
+                icon_color : "white"
+                md_bg_color: get_color_from_hex("#69140E")
+                text_color: "white"
+                font_size: "20sp"
+                font_name: "BebasNeue-Regular"
+                on_release: app.remove_item_from_list(root.current_list_name, root.current_item_title, root.current_mode)
+            # Add other UI elements here
+
+<AddFromRecentsScreen>
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Select Item"
+            md_bg_color: get_color_from_hex("#69140E")
+            font_name: "Kiona-Regular"
+            left_action_items: [["arrow-left", lambda x: app.movetomain(), "Back"]]
+
+        MDFloatLayout:
+            md_bg_color: get_color_from_hex("#EED9C4")
+            ScrollView:
+                MDList:
+                    id: recent_search_list  # Reference to the MDList where recent searches will be displayed
+
+<SlideshowScreen>
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: get_color_from_hex("#EED9C4")
+
+        MDRoundFlatIconButton:
+            icon: 'arrow-left-bottom'
+            text: 'Return'
+            icon_color : "white"
+            md_bg_color: get_color_from_hex("#69140E")
+            text_color: "white"
+            font_size: "20sp"
+            font_name: "BebasNeue-Regular"
+            on_release: app.root.current = "main_screen"
+
+        MDCarousel:
+            direction: 'right'
+            Image:
+                source: 'SearchScreen.png'
+            Image:
+                source: 'ListScreen.png'
+            Image:
+                source: 'SettingsScreen.png'
+            Image:
+                source: 'RecentScreen.png'
+            Image:
+                source: 'DirectionScreen.png'
